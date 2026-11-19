@@ -7,9 +7,9 @@
     "dev:api": "cargo run -p api",
     "dev:ios": "pnpm --filter app tauri ios dev",
     "dev:android": "pnpm --filter app tauri android dev",
-    "dev:tauri": "pnpm --filter app dev:tauri",
+    "dev:app": "pnpm --filter app tauri dev",
     "build": "pnpm --filter app build",
-    "build:tauri": "pnpm --filter app build:tauri",
+    "build:app": "pnpm --filter app tauri build",
     "tauri": "pnpm --filter app tauri"
   }
 }
