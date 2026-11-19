@@ -10,24 +10,24 @@ export async function getAppInfo(): Promise<AppInfo> {
 
 export const storage: IStorageService = {
   async getItem(key: string): Promise<string | null> {
-    return invoke<string | null>("get_storage_item", { key }).catch(() => null);
+    return invoke<string | null>("get_storage_item", { key });
   },
   async setItem(key: string, value: string): Promise<void> {
-    await invoke("set_storage_item", { key, value }).catch(() => {});
+    await invoke("set_storage_item", { key, value });
   },
   async removeItem(key: string): Promise<void> {
-    await invoke("remove_storage_item", { key }).catch(() => {});
+    await invoke("remove_storage_item", { key });
   },
 };
 
 export const session: ISessionService = {
   async getToken(): Promise<string | null> {
-    return invoke<string | null>("get_session_token").catch(() => null);
+    return invoke<string | null>("get_session_token");
   },
   async setToken(token: string): Promise<void> {
-    await invoke("set_session_token", { token }).catch(() => {});
+    await invoke("set_session_token", { token });
   },
   async clearToken(): Promise<void> {
-    await invoke("clear_session_token").catch(() => {});
+    await invoke("clear_session_token");
   },
 };

@@ -2,6 +2,7 @@ use axum::{routing::get, Json, Router};
 use common::AppInfo;
 use serde_json::{json, Value};
 use std::net::SocketAddr;
+use tower_http::cors::CorsLayer;
 
 async fn health_handler() -> Json<Value> {
     let app_info = AppInfo::default();
@@ -13,7 +14,10 @@ async fn health_handler() -> Json<Value> {
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/health", get(health_handler));
+    let app = Router::new()
+        .route("/health", get(health_handler))
+        .route("/api/health", get(health_handler))
+        .layer(CorsLayer::permissive());
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     println!("API server listening on http://{}", addr);

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { isTauri, storage, getAppInfo } from "@platform";
-import type { AppInfo } from "../platform/types";
+import { isTauri, storage, session, getAppInfo } from "@platform";
 import { ref, onMounted } from "vue";
 
 const platformTitle = isTauri ? "running in Tauri" : "running in browser";
@@ -8,22 +7,35 @@ const platformDescription = isTauri
   ? "Running inside the Tauri v2 native shell"
   : "Running in the web browser (PWA mode)";
 
-const storageStatus = ref<string>("initializing...");
-const appInfo = ref<AppInfo | null>(null);
+const storageStatus = ref<string>("testing...");
+const sessionStatus = ref<string>("testing...");
+const appInfoResult = ref<string>("loading...");
 
 onMounted(async () => {
+  // Test storage
   try {
-    await storage.setItem("demo_key", "Scaffold storage is operational");
+    await storage.setItem("demo_key", "Operational");
     const val = await storage.getItem("demo_key");
-    storageStatus.value = val ?? "failed to retrieve";
-  } catch (err) {
-    storageStatus.value = `Error: ${String(err)}`;
+    storageStatus.value = val ?? "null";
+  } catch (err: any) {
+    storageStatus.value = `Failed: ${err?.message ?? err}`;
   }
 
+  // Test session
   try {
-    appInfo.value = await getAppInfo();
-  } catch (err) {
-    console.error("Failed to load app info:", err);
+    await session.setToken("scaffold_token_xyz");
+    const token = await session.getToken();
+    sessionStatus.value = token ?? "null";
+  } catch (err: any) {
+    sessionStatus.value = `Failed: ${err?.message ?? err}`;
+  }
+
+  // Test shared domain AppInfo
+  try {
+    const info = await getAppInfo();
+    appInfoResult.value = `${info.name} v${info.version}`;
+  } catch (err: any) {
+    appInfoResult.value = `Failed: ${err?.message ?? err}`;
   }
 });
 </script>
@@ -50,11 +62,15 @@ onMounted(async () => {
         </div>
         <div class="row">
           <span class="label">Storage test:</span>
-          <span class="value">{{ storageStatus }}</span>
+          <span class="value" :class="{ error: storageStatus.startsWith('Failed') }">{{ storageStatus }}</span>
         </div>
-        <div v-if="appInfo" class="row">
+        <div class="row">
+          <span class="label">Session test:</span>
+          <span class="value" :class="{ error: sessionStatus.startsWith('Failed') }">{{ sessionStatus }}</span>
+        </div>
+        <div class="row">
           <span class="label">Shared AppInfo:</span>
-          <span class="value">{{ appInfo.name }} v{{ appInfo.version }}</span>
+          <span class="value" :class="{ error: appInfoResult.startsWith('Failed') }">{{ appInfoResult }}</span>
         </div>
       </section>
     </div>
@@ -148,6 +164,12 @@ onMounted(async () => {
 .value {
   font-weight: 600;
   text-align: right;
+}
+
+.value.error {
+  color: #dc2626;
+  font-weight: 500;
+  font-size: 0.85em;
 }
 
 code {

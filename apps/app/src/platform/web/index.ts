@@ -2,14 +2,17 @@ import type { AppInfo, IStorageService, ISessionService } from "../types";
 
 export const isTauri = false;
 
-// Demonstrates retrieving domain types shared across crates/common
+// Targets the Axum backend (proxied via Vite's `/api` in dev, or configured via VITE_API_URL)
+const API_BASE = import.meta.env.VITE_API_URL || "/api";
+
+// Calls Axum GET /health to fetch domain AppInfo from crates/common
 export async function getAppInfo(): Promise<AppInfo> {
-  const res = await fetch("/health").catch(() => null);
-  if (res?.ok) {
-    const data = await res.json().catch(() => null);
-    if (data?.app) return data.app;
+  const res = await fetch(`${API_BASE}/health`);
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status} ${res.statusText}`);
   }
-  return { name: "horatio-scaffold", version: "0.1.0" };
+  const data = await res.json();
+  return data.app;
 }
 
 export const storage: IStorageService = {
@@ -24,31 +27,30 @@ export const storage: IStorageService = {
   },
 };
 
-// Illustrative session service stub:
-// In production, this typically communicates with an auth endpoint (e.g. /api/session).
-// Here we use localStorage as an in-browser fallback for local demo testing.
-const SESSION_KEY = "demo_session_token";
-
+// Fetch-based session stub contacting backend auth/session endpoint
 export const session: ISessionService = {
   async getToken(): Promise<string | null> {
-    // Illustrative HTTP fetch with fallback:
-    const res = await fetch("/api/session").catch(() => null);
-    if (res?.ok) {
-      const data = await res.json().catch(() => null);
-      return data?.token ?? null;
+    const res = await fetch(`${API_BASE}/session`);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} ${res.statusText}`);
     }
-    return localStorage.getItem(SESSION_KEY);
+    const data = await res.json();
+    return data.token ?? null;
   },
   async setToken(token: string): Promise<void> {
-    await fetch("/api/session", {
+    const res = await fetch(`${API_BASE}/session`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token }),
-    }).catch(() => {});
-    localStorage.setItem(SESSION_KEY, token);
+    });
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    }
   },
   async clearToken(): Promise<void> {
-    await fetch("/api/session", { method: "DELETE" }).catch(() => {});
-    localStorage.removeItem(SESSION_KEY);
+    const res = await fetch(`${API_BASE}/session`, { method: "DELETE" });
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    }
   },
 };
