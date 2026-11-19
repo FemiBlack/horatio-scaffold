@@ -2,7 +2,7 @@
 
 > **Companion Demo Repo**  
 > This repository is a minimal architectural scaffold demonstrating how to structure a cross-platform Rust and Vue 3 monorepo. It is designed to accompany the blog article:  
-> 🔗 **[Building a Cross-Platform App with Tauri v2 and Vue 3](https://example.com/blog/cross-platform-rust-tauri-v2-vue3)** *(placeholder)*
+> 🔗 **[Building an offline-first cross-platform Rust application in Tauri](https://femiblack.dev/blog/building-a-crossplatform-rust-app)**
 
 ---
 
@@ -95,7 +95,8 @@ Launches the Tauri v2 desktop application in development mode with hot-reloading
 
 ```bash
 # From workspace root:
-pnpm tauri dev
+pnpm dev:app
+# (or: pnpm tauri dev)
 
 # Or directly in apps/app:
 cd apps/app && pnpm tauri dev
@@ -104,7 +105,9 @@ cd apps/app && pnpm tauri dev
 Build the native desktop application binary:
 
 ```bash
-pnpm tauri build
+# From workspace root:
+pnpm build:app
+# (or: pnpm tauri build)
 ```
 
 ### 3. Tauri Mobile Target
@@ -114,7 +117,7 @@ To run on iOS or Android, ensure platform prerequisites are installed:
 - **Android**: Android Studio, Android SDK Platform-Tools, NDK, and `ANDROID_HOME` configured. Run `rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android`.
 - **iOS** (macOS only): Xcode and iOS Simulator. Run `rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim`.
 
-Initialize mobile platforms if needed:
+Initialize mobile platforms if needed (run inside `apps/app`):
 ```bash
 cd apps/app
 pnpm tauri android init
@@ -124,10 +127,13 @@ pnpm tauri ios init
 
 Run on mobile emulator / device:
 ```bash
-cd apps/app
-pnpm tauri android dev
+# From workspace root:
+pnpm dev:android
 # or
-pnpm tauri ios dev
+pnpm dev:ios
+
+# Or directly in apps/app:
+cd apps/app && pnpm tauri android dev
 ```
 
 > **Note on Mobile HMR**: `vite.config.tauri.ts` inspects `process.env.TAURI_DEV_HOST`. During mobile dev, Tauri automatically binds the local IP to allow the simulator or device to connect to the dev server's WebSocket on port `1421`.
@@ -137,7 +143,9 @@ pnpm tauri ios dev
 The minimal Axum server demonstrates sharing `crates/common` types with a backend server:
 
 ```bash
-cargo run -p api
+# From workspace root:
+pnpm dev:api
+# (or: cargo run -p api)
 ```
 
 Verify the health check endpoint:
