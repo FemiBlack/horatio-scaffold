@@ -1,0 +1,29 @@
+{
+  "name": "app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config vite.config.ts",
+    "dev:tauri": "vite --config vite.config.tauri.ts",
+    "build": "vite build --config vite.config.ts",
+    "build:tauri": "vite build --config vite.config.tauri.ts",
+    "tauri": "TAURI_APP_PATH=../../crates/tauri tauri"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.6.0",
+    "vue": "^3.5.17"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.3",
+    "@types/node": "^22.13.0",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "~5.8.0",
+    "vite": "^6.2.0",
+    "vite-plugin-pwa": "^1.0.2",
+    "vue-tsc": "^2.2.0"
+  },
+  "tauri": {
+    "appPath": "../../crates/tauri"
+  }
+}

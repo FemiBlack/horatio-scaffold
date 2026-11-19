@@ -1,0 +1,21 @@
+# Rust
+target/
+**/*.rs.bk
+Cargo.lock
+
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+.pnpm-store
+
+# Tauri generated directories
+crates/tauri/gen/
+gen/
+
+# Environment & logs
+*.log
+.DS_Store
+.env
+.env.*.local
