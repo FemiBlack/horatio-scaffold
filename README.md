@@ -42,9 +42,10 @@ Rather than scattering conditional checks (`isTauri ? ... : ...`) or relying on 
 ├── crates/
 │   ├── api/                      # Minimal Axum HTTP server (health route)
 │   ├── common/                   # Shared types (AppInfo) used by api & tauri
-│   └── tauri/                    # Tauri v2 native desktop & mobile shell
-│       ├── capabilities/         # Tauri v2 capability definitions
-│       └── tauri.conf.json       # App configuration and build scripts
+│   ├── tauri/                    # Tauri v2 native desktop & mobile shell
+│   │   ├── capabilities/         # Tauri v2 capability definitions
+│   │   └── tauri.conf.json       # App configuration and build scripts
+│   └── .taurignore               # Ignores api/ from triggering Tauri dev rebuilds
 ├── Cargo.toml                    # Rust workspace
 └── pnpm-workspace.yaml           # Frontend workspace
 ```

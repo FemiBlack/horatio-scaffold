@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { isTauri, storage } from "@platform";
+import { isTauri, storage, getAppInfo } from "@platform";
+import type { AppInfo } from "../platform/types";
 import { ref, onMounted } from "vue";
 
 const platformTitle = isTauri ? "running in Tauri" : "running in browser";
@@ -8,6 +9,7 @@ const platformDescription = isTauri
   : "Running in the web browser (PWA mode)";
 
 const storageStatus = ref<string>("initializing...");
+const appInfo = ref<AppInfo | null>(null);
 
 onMounted(async () => {
   try {
@@ -16,6 +18,12 @@ onMounted(async () => {
     storageStatus.value = val ?? "failed to retrieve";
   } catch (err) {
     storageStatus.value = `Error: ${String(err)}`;
+  }
+
+  try {
+    appInfo.value = await getAppInfo();
+  } catch (err) {
+    console.error("Failed to load app info:", err);
   }
 });
 </script>
@@ -43,6 +51,10 @@ onMounted(async () => {
         <div class="row">
           <span class="label">Storage test:</span>
           <span class="value">{{ storageStatus }}</span>
+        </div>
+        <div v-if="appInfo" class="row">
+          <span class="label">Shared AppInfo:</span>
+          <span class="value">{{ appInfo.name }} v{{ appInfo.version }}</span>
         </div>
       </section>
     </div>

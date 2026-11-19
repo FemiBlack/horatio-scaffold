@@ -1,7 +1,12 @@
 import { invoke } from "@tauri-apps/api/core";
-import type { IStorageService, ISessionService } from "../types";
+import type { AppInfo, IStorageService, ISessionService } from "../types";
 
 export const isTauri = true;
+
+// Calls native Tauri command `get_app_info` returning AppInfo from crates/common
+export async function getAppInfo(): Promise<AppInfo> {
+  return invoke<AppInfo>("get_app_info");
+}
 
 export const storage: IStorageService = {
   async getItem(key: string): Promise<string | null> {
